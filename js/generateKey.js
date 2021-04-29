@@ -13,22 +13,14 @@ const generateKeys = key => {
   // Split result into left and right
   const l = performLeftShift(p10.slice(0, 5), 1);
   const r = performLeftShift(p10.slice(5, 10), 1);
-  
-  // Apply 1 bit shift and permutate using perm8
-  const key1 = permutate([...l, ...r], perm8);
 
-  // Do the same except with a 2 bit perm
-  const key2 = permutate(
-    [
-      ...performLeftShift(l, 2),
-      ...performLeftShift(r, 2),
-    ], 
-    perm8
-  );
+  // Shift the left and right by now totaling 3
+  const l2 = performLeftShift(l, 2);
+  const r2 = performLeftShift(r, 2);
 
   return {
-    key1, 
-    key2,
+    key1: permutate([...l, ...r], perm8), 
+    key2: permutate([...l2, ...r2], perm8),
   }
 }
 
