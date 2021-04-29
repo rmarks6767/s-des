@@ -1,36 +1,5 @@
 const { perm10, perm8 } = require('./tables');
-
-/**
- * Takes in a binary item and performs the given permutation
- * @param {*} input item to be permutated
- * @param {*} perm  the permuation to be performed
- * @returns the permutated item
- */
-const permutate = (input, perm) => {
-  const permutation = [...perm];
-
-  for(let i = 0; i < permutation.length; i++) {
-    permutation[i] = input[perm[i]];
-  }
-
-  return permutation;
-}
-
-/**
- * Takes in an array and shifts it the given amount
- * @param {*} arr the array to be be shifted 
- * @param {*} amount the amount to shift that array
- * @returns the shifted array
- */
-const performLeftShift = (arr, amount) => {
-  const shifted = [];
-
-  for(let i = 0; i < arr.length; i++) {
-    shifted.push(arr[(i + amount) % arr.length])
-  }
-
-  return shifted;
-}
+const { permutate, performLeftShift } = require('./helpers');
 
 /**
  * Takes in a key and returns the two generated keys
@@ -65,5 +34,4 @@ const generateKeys = key => {
 
 module.exports = {
   generateKeys,
-  permutate,
 }
