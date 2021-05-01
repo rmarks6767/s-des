@@ -1,5 +1,5 @@
-const { encrypt, decrypt } = require('./des');
-const { binaryToDecimal, decimalToBinary } = require('./helpers'); 
+const { encrypt, decrypt } = require('./DES/des');
+const { binaryToDecimal, decimalToBinary } = require('../helpers'); 
 
 // adjust them to be 8 bit length
 const stringToBits = str => {

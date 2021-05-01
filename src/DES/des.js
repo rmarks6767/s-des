@@ -1,6 +1,6 @@
 const { generateKeys } = require('./generateKey');
 const { ep, initPerm, inversePerm, s0, s1, perm4 } = require('./tables');
-const { decimalToBinary, binaryToDecimal, permutate, expandPermutation, performXor } = require('./helpers');
+const { decimalToBinary, binaryToDecimal, permutate, expandPermutation, performXor } = require('../../helpers');
 
 
 /**
