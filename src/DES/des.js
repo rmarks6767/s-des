@@ -109,11 +109,8 @@ const encrypt = (plaintext, key) => {
   // perform final inverse permutation
   const inversePermutation = permutate(round2Result, inversePerm);
 
-  // clean so it falls in correct letters
-  const result = decimalToBinary((binaryToDecimal(inversePermutation.join('')) % 58) + 32);
-
   return {
-    result,
+    result: inversePermutation.join(''),
     steps: {
       'Key Generation': keyGenSteps,
       'Intial Permutation': [`Perform the initial permutation on the plaintext, transforming ${plaintext} into ${initialPermutation.join('')}`],
@@ -146,10 +143,8 @@ const decrypt = (cipherText, key) => {
   // perform final inverse permutation
   const inversePermutation = permutate(round2Result, inversePerm);
 
-  const result = decimalToBinary((binaryToDecimal(inversePermutation.join('')) % 58) + 32);
-
   return {
-    result,
+    result: inversePermutation.join(''),
     steps: {
       'Key Generation': keyGenSteps,
       'Intial Permutation': [`Perform the initial permutation on the cipherText, transforming ${cipherText} into ${initialPermutation.join('')}`],

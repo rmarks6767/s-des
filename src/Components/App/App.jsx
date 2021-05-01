@@ -1,7 +1,17 @@
 /* eslint-disable import/extensions */
 import React, { useState } from 'react';
 import {
-  Button, Paper, Step, StepContent, StepLabel, Stepper, Tabs, Tab, TextField, Typography,
+  Button,
+  ButtonGroup,
+  Paper,
+  Step,
+  StepContent,
+  StepLabel,
+  Stepper,
+  Tabs,
+  Tab,
+  TextField,
+  Typography,
 } from '@material-ui/core';
 import { stringToBits, binaryToDecimal } from '../../DES/helpers.js';
 import { encrypt } from '../../DES/des.js';
@@ -40,12 +50,12 @@ const App = () => {
     setCiphertext(ct);
   };
 
-  const decryptMessage = () => {
-    const cipherBits = stringToBits(encryptedText);
+  const decryptMessage = (cText, key) => {
+    const cipherBits = stringToBits(cText);
     let text = '';
 
     cipherBits.forEach((bit, i) => {
-      const { result: res, steps: s } = decrypt(bit, decryptionkey);
+      const { result: res, steps: s } = decrypt(bit, key);
 
       if (i === 0) {
         setSteps({
@@ -68,6 +78,9 @@ const App = () => {
     <div className="app">
       <Typography className="title general-padding" variant="h1" component="h2">
         Implementation of a Mini-DES
+      </Typography>
+      <Typography className="title general-padding" variant="h5" component="h5">
+        Project by Vivian Nowka-Keane and River Marks
       </Typography>
       <Paper className="general-padding" square>
         <Tabs
@@ -93,6 +106,7 @@ const App = () => {
       {tab === 0 && (
       <div className="input-area">
         <TextField
+          className="generaler-padding"
           placeholder="Hello World"
           onChange={(e) => setPlaintext(e.target.value)}
           id="outlined-plaintext"
@@ -101,6 +115,7 @@ const App = () => {
           value={plaintext}
         />
         <TextField
+          className="generaler-padding"
           placeholder="1101001001"
           onChange={(e) => setEncryptionKey(e.target.value)}
           id="outlined-encryption-key"
@@ -108,41 +123,56 @@ const App = () => {
           variant="outlined"
           value={encryptionKey}
         />
-        <Button onClick={() => encryptMessage(plaintext, encryptionKey)} variant="contained" color="primary">
-          Encrypt
-        </Button>
-        <Button
-          onClick={() => {
-            setPlaintext('Hello World');
-            setEncryptionKey('1001010101');
-            encryptMessage('Hello World', '1001010101');
-          }}
-          variant="contained"
-        >
-          Try a Test Encryption
-        </Button>
+        <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
+          <Button onClick={() => encryptMessage(plaintext, encryptionKey)}>
+            Encrypt
+          </Button>
+          <Button
+            onClick={() => {
+              setPlaintext('Hello World');
+              setEncryptionKey('1010101010');
+              encryptMessage('Hello World', '1010101010');
+            }}
+          >
+            Try an Example Encryption
+          </Button>
+        </ButtonGroup>
       </div>
       )}
       {tab === 1 && (
       <div className="input-area">
         <TextField
+          className="generaler-padding"
           placeholder="Ciphertext"
           onChange={(e) => setEncryptedText(e.target.value)}
           id="outlined-ciphertext"
-          label="Decrypt a cipher text"
+          label="Enter text to decrypt"
           variant="outlined"
+          value={encryptedText}
         />
         <TextField
+          className="generaler-padding"
           placeholder="1101001001"
           onChange={(e) => setDecryptionKey(e.target.value)}
           id="outlined-decryption-key-field"
-          label="Key that was used for encryption"
+          label="Enter key that was used"
           variant="outlined"
+          value={decryptionkey}
         />
-        <Button onClick={() => decryptMessage()} variant="contained" color="primary">
-          Decrypt
-        </Button>
-
+        <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
+          <Button onClick={() => decryptMessage(encryptedText, decryptionkey)}>
+            Decrypt
+          </Button>
+          <Button
+            onClick={() => {
+              setEncryptedText('òDWW¡Ò(¡ÙWË');
+              setDecryptionKey('1010101010');
+              decryptMessage('òDWW¡Ò(¡ÙWË', '1010101010');
+            }}
+          >
+            Try an Example Decryption
+          </Button>
+        </ButtonGroup>
       </div>
       )}
       {Object.keys(steps).length !== 0 && (
