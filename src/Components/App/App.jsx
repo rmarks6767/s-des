@@ -76,7 +76,7 @@ const App = () => {
 
   return (
     <div className="app">
-      <Typography className="title general-padding" variant="h1" component="h2">
+      <Typography className="title title-title general-padding" variant="h1" component="h2">
         Implementation of a Mini-DES
       </Typography>
       <Typography className="title general-padding" variant="h5" component="h5">
