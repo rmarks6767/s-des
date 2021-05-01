@@ -4,6 +4,7 @@
   "description": "Codes and Ciphers Implementation of a Mini-DES",
   "main": "src/index.js",
   "scripts": {
+    "start-dev": "npm run build && npm start",
     "build": "webpack",
     "postinstall": "npm run build",
     "start": "nodemon src/index.js"
