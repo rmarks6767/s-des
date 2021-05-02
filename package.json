@@ -4,7 +4,7 @@
   "description": "Codes and Ciphers Implementation of a Mini-DES",
   "main": "src/index.js",
   "scripts": {
-    "start-dev": "npm run build && npm start",
+    "start-dev": "webpack serve",
     "build": "webpack",
     "postinstall": "npm run build",
     "start": "nodemon src/index.js"
@@ -51,7 +51,7 @@
     "html-webpack-plugin": "^4.5.0",
     "style-loader": "^2.0.0",
     "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0",
+    "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.0"
   }
 }

@@ -27,6 +27,9 @@ const generateKeys = (key) => {
   const key1 = permutate(combine1, perm8);
   const key2 = permutate(combine2, perm8);
 
+  console.log(key1.join(''));
+  console.log(key2.join(''));
+
   return {
     key1,
     key2,

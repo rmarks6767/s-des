@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   ButtonGroup,
@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import { stringToBits, binaryToDecimal } from '../../DES/helpers.js';
+import { stringToBits, binaryToDecimal, performXor } from '../../DES/helpers.js';
 import { encrypt } from '../../DES/des.js';
 import './App.css';
 import { decrypt } from '../../DES/index.js';
@@ -25,14 +25,24 @@ const App = () => {
   const [plaintext, setPlaintext] = useState('');
   const [encryptionKey, setEncryptionKey] = useState('');
   const [ciphertext, setCiphertext] = useState();
+  const [ptAsBinary, setPtAsBinary] = useState();
 
   const [encryptedText, setEncryptedText] = useState('');
   const [decryptionkey, setDecryptionKey] = useState('');
   const [decryptedText, setDecryptedText] = useState();
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://gist.github.com/rmarks6767/0d620759e731b21903ae949ebe10fbc4.js';
+    script.async = true;
+    document.getElementById('script-home').appendChild(script);
+  }, []);
+
   const encryptMessage = (pText, key) => {
-    const bits = stringToBits(pText.toUpperCase());
+    const bits = stringToBits(pText);
     let ct = '';
+    let pt = '';
+    const stuff = [];
 
     bits.forEach((bit, i) => {
       const { result: res, steps: s } = encrypt(bit, key);
@@ -42,17 +52,24 @@ const App = () => {
           Start: [`The following shows how the encryption for the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary, works.`],
           ...s,
         });
+      } else {
+        stuff.push(`${bit} ^ ${bits[i - 1]} ${performXor([...bit], [...bits[i - 1]]).join('')}`);
       }
 
-      ct += String.fromCharCode(binaryToDecimal(res));
+      pt += `${bit} `;
+      ct += `${res} `;
     });
 
+    console.log(stuff);
+
+    setPtAsBinary(pt);
     setCiphertext(ct);
   };
 
   const decryptMessage = (cText, key) => {
-    const cipherBits = stringToBits(cText);
+    const cipherBits = cText.split(' ');
     let text = '';
+    const stuff = [];
 
     cipherBits.forEach((bit, i) => {
       const { result: res, steps: s } = decrypt(bit, key);
@@ -62,9 +79,13 @@ const App = () => {
           Start: [`The following shows how the decryption for the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary, works.`],
           ...s,
         });
+      } else {
+        stuff.push(`${bit} ^ ${cipherBits[i - 1]} ${performXor([...bit], [...cipherBits[i - 1]]).join('')}`);
       }
       text += String.fromCharCode(binaryToDecimal(res));
     });
+
+    console.log(stuff);
 
     setDecryptedText(text);
   };
@@ -89,6 +110,7 @@ const App = () => {
           indicatorColor="primary"
           textColor="primary"
           onChange={(_, newValue) => {
+            setActiveStep(0);
             setTab(newValue);
             setSteps({});
             setPlaintext('');
@@ -101,6 +123,7 @@ const App = () => {
         >
           <Tab label="Encrypt" />
           <Tab label="Decrypt" />
+          <Tab label="The Code" />
         </Tabs>
       </Paper>
       {tab === 0 && (
@@ -175,6 +198,21 @@ const App = () => {
         </ButtonGroup>
       </div>
       )}
+      {tab === 2 && (
+        <>
+          <Typography className="title general-padding" variant="h5" component="h5">
+            View this on GitHub
+          </Typography>
+          <iframe
+            title="github-code"
+            frameBorder={0}
+            width="100%"
+            height="500px"
+            srcDoc='<html><body><script src="https://gist.github.com/rmarks6767/0d620759e731b21903ae949ebe10fbc4.js"></script></body></html>'
+          />
+        </>
+      )}
+      <div hidden={tab !== 2} id="script-home" />
       {Object.keys(steps).length !== 0 && (
         <div>
           <Typography className="general-padding" variant="h3" component="h3">
@@ -185,7 +223,7 @@ const App = () => {
           </Typography>
           {ciphertext && (
             <Typography className="general-padding" variant="h4" component="h5">
-              <b>{plaintext}</b>
+              <b>{ptAsBinary}</b>
               {' '}
               encrypts to
               {' '}

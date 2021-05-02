@@ -83,6 +83,11 @@ const expandPermutation = (input) => {
   return expanded;
 };
 
+/**
+ * Takes in a string and returns an array of bits from it
+ * @param {*} str the string to convert to bits
+ * @returns an array of bits
+ */
 const stringToBits = (str) => [...str].map((_, i) => {
   let bin = decimalToBinary(str.charCodeAt(i), false).toString();
   const { length } = bin;
