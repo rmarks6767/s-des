@@ -1,8 +1,9 @@
 /* eslint-disable import/extensions */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   ButtonGroup,
+  Link,
   Paper,
   Step,
   StepContent,
@@ -13,14 +14,27 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
-import { stringToBits, binaryToDecimal, performXor } from '../../DES/helpers.js';
+import { stringToBits, binaryToDecimal } from '../../DES/helpers.js';
 import { encrypt } from '../../DES/des.js';
 import './App.css';
 import { decrypt } from '../../DES/index.js';
 
+const isBinary = (arr) => {
+  let isBin = true;
+  arr.forEach((a) => {
+    if (a !== '0' && a !== '1') isBin = false;
+  });
+
+  return isBin;
+};
+
 const App = () => {
   const [tab, setTab] = useState(0);
   const [steps, setSteps] = useState({});
+  const [errors, setErrors] = useState({
+    key: null,
+    text: null,
+  });
 
   const [plaintext, setPlaintext] = useState('');
   const [encryptionKey, setEncryptionKey] = useState('');
@@ -31,36 +45,29 @@ const App = () => {
   const [decryptionkey, setDecryptionKey] = useState('');
   const [decryptedText, setDecryptedText] = useState();
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://gist.github.com/rmarks6767/0d620759e731b21903ae949ebe10fbc4.js';
-    script.async = true;
-    document.getElementById('script-home').appendChild(script);
-  }, []);
-
   const encryptMessage = (pText, key) => {
-    const bits = stringToBits(pText);
+    let bits;
+    const isBinaryBool = isBinary([...pText]);
+
+    if (isBinaryBool) bits = pText.match(/.{1,8}/g);
+    else bits = stringToBits(pText);
+
     let ct = '';
     let pt = '';
-    const stuff = [];
 
     bits.forEach((bit, i) => {
       const { result: res, steps: s } = encrypt(bit, key);
 
       if (i === 0) {
         setSteps({
-          Start: [`The following shows how the encryption for the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary, works.`],
+          Start: [`The following shows how the encryption for ${isBinaryBool ? bit : ` the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary`}, works.`],
           ...s,
         });
-      } else {
-        stuff.push(`${bit} ^ ${bits[i - 1]} ${performXor([...bit], [...bits[i - 1]]).join('')}`);
       }
 
       pt += `${bit} `;
       ct += `${res} `;
     });
-
-    console.log(stuff);
 
     setPtAsBinary(pt);
     setCiphertext(ct);
@@ -69,7 +76,6 @@ const App = () => {
   const decryptMessage = (cText, key) => {
     const cipherBits = cText.split(' ');
     let text = '';
-    const stuff = [];
 
     cipherBits.forEach((bit, i) => {
       const { result: res, steps: s } = decrypt(bit, key);
@@ -79,13 +85,9 @@ const App = () => {
           Start: [`The following shows how the decryption for the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary, works.`],
           ...s,
         });
-      } else {
-        stuff.push(`${bit} ^ ${cipherBits[i - 1]} ${performXor([...bit], [...cipherBits[i - 1]]).join('')}`);
       }
       text += String.fromCharCode(binaryToDecimal(res));
     });
-
-    console.log(stuff);
 
     setDecryptedText(text);
   };
@@ -107,8 +109,8 @@ const App = () => {
         <Tabs
           centered
           value={tab}
-          indicatorColor="primary"
-          textColor="primary"
+          indicatorColor="secondary"
+          textColor="secondary"
           onChange={(_, newValue) => {
             setActiveStep(0);
             setTab(newValue);
@@ -129,9 +131,17 @@ const App = () => {
       {tab === 0 && (
       <div className="input-area">
         <TextField
+          error={errors.text}
+          helperText={errors.text}
           className="generaler-padding"
           placeholder="Hello World"
-          onChange={(e) => setPlaintext(e.target.value)}
+          onChange={(e) => {
+            setPlaintext(e.target.value);
+            setErrors({
+              ...errors,
+              text: null,
+            });
+          }}
           id="outlined-plaintext"
           label="Enter text to encrypt"
           variant="outlined"
@@ -139,15 +149,70 @@ const App = () => {
         />
         <TextField
           className="generaler-padding"
-          placeholder="1101001001"
-          onChange={(e) => setEncryptionKey(e.target.value)}
+          error={errors.key}
+          helperText={errors.key}
+          placeholder="1010101010"
+          onChange={(e) => {
+            setEncryptionKey(e.target.value);
+            setErrors({
+              ...errors,
+              key: null,
+            });
+          }}
           id="outlined-encryption-key"
           label="Enter key to use"
           variant="outlined"
           value={encryptionKey}
         />
         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-          <Button onClick={() => encryptMessage(plaintext, encryptionKey)}>
+          <Button onClick={() => {
+            let anyError = false;
+            let newErrors = {};
+
+            if (plaintext.length === 0) {
+              newErrors = {
+                ...newErrors,
+                text: 'Must not be empty.',
+              };
+              anyError = true;
+            }
+
+            if (isBinary([...plaintext]) && plaintext.length % 8 !== 0) {
+              newErrors = {
+                ...newErrors,
+                text: 'Binary text must be in blocks of 8.',
+              };
+              anyError = true;
+            }
+
+            if (!isBinary([...encryptionKey])) {
+              newErrors = {
+                ...newErrors,
+                key: 'The key must be expressed in binary.',
+              };
+              anyError = true;
+            }
+
+            if (encryptionKey.length !== 10) {
+              newErrors = {
+                ...newErrors,
+                key: 'The key must be 10 in length.',
+              };
+              anyError = true;
+            }
+
+            if (encryptionKey.length === 0) {
+              newErrors = {
+                ...newErrors,
+                key: 'Must not be empty.',
+              };
+              anyError = true;
+            }
+
+            if (!anyError) encryptMessage(plaintext, encryptionKey);
+            else setErrors(newErrors);
+          }}
+          >
             Encrypt
           </Button>
           <Button
@@ -165,25 +230,89 @@ const App = () => {
       {tab === 1 && (
       <div className="input-area">
         <TextField
+          error={errors.text}
+          helperText={errors.text}
           className="generaler-padding"
           placeholder="Ciphertext"
-          onChange={(e) => setEncryptedText(e.target.value)}
+          onChange={(e) => {
+            setEncryptedText(e.target.value);
+            setErrors({
+              ...errors,
+              text: null,
+            });
+          }}
           id="outlined-ciphertext"
           label="Enter text to decrypt"
           variant="outlined"
           value={encryptedText}
         />
         <TextField
+          error={errors.key}
+          helperText={errors.key}
           className="generaler-padding"
-          placeholder="1101001001"
-          onChange={(e) => setDecryptionKey(e.target.value)}
+          placeholder="1010101010"
+          onChange={(e) => {
+            setDecryptionKey(e.target.value);
+            setErrors({
+              ...errors,
+              key: null,
+            });
+          }}
           id="outlined-decryption-key-field"
           label="Enter key that was used"
           variant="outlined"
           value={decryptionkey}
         />
         <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-          <Button onClick={() => decryptMessage(encryptedText, decryptionkey)}>
+
+          <Button onClick={() => {
+            let anyError = false;
+            let newErrors = {};
+
+            if (encryptedText.length === 0) {
+              newErrors = {
+                ...newErrors,
+                text: 'Must not be empty.',
+              };
+              anyError = true;
+            }
+
+            if (isBinary([...encryptedText]) && encryptedText.length % 8 !== 0) {
+              newErrors = {
+                ...newErrors,
+                text: 'Binary text must be in blocks of 8.',
+              };
+              anyError = true;
+            }
+
+            if (!isBinary([...decryptionkey])) {
+              newErrors = {
+                ...newErrors,
+                key: 'The key must be expressed in binary.',
+              };
+              anyError = true;
+            }
+
+            if (decryptionkey.length !== 10) {
+              newErrors = {
+                ...newErrors,
+                key: 'The key must be 10 in length.',
+              };
+              anyError = true;
+            }
+
+            if (decryptionkey.length === 0) {
+              newErrors = {
+                ...newErrors,
+                key: 'Must not be empty.',
+              };
+              anyError = true;
+            }
+
+            if (!anyError) decryptMessage(encryptedText, decryptionkey);
+            else setErrors(newErrors);
+          }}
+          >
             Decrypt
           </Button>
           <Button
@@ -201,7 +330,9 @@ const App = () => {
       {tab === 2 && (
         <>
           <Typography className="title general-padding" variant="h5" component="h5">
-            View this on GitHub
+            <Link href="https://github.com/rmarks6767/s-des" onClick={(event) => event.preventDefault()}>
+              View this on GitHub
+            </Link>
           </Typography>
           <iframe
             title="github-code"
@@ -239,20 +370,21 @@ const App = () => {
               <b>{decryptedText}</b>
             </Typography>
           )}
-          <Stepper className="general-padding stepper-border" activeStep={activeStep} orientation="vertical">
-            {Object.keys(steps).map((key) => (
-              <Step key={key}>
-                <StepLabel>{key}</StepLabel>
-                <StepContent>
-                  <div>
+          <div style={{ padding: '20px' }}>
+            <Stepper className="general-padding stepper-border" activeStep={activeStep} orientation="vertical">
+              {Object.keys(steps).map((key) => (
+                <Step key={key}>
+                  <StepLabel>{key}</StepLabel>
+                  <StepContent>
                     <div>
-                      <ol>
-                        {steps[key].map((text) => (
-                          <li key={text}>{text}</li>
-                        ))}
-                      </ol>
-                      {activeStep !== 0 && <Button onClick={handleBack}>Back</Button>}
-                      {activeStep !== Object.keys(steps).length - 1 && (
+                      <div>
+                        <ol>
+                          {steps[key].map((text) => (
+                            <li key={text}>{text}</li>
+                          ))}
+                        </ol>
+                        {activeStep !== 0 && <Button onClick={handleBack}>Back</Button>}
+                        {activeStep !== Object.keys(steps).length - 1 && (
                         <Button
                           variant="contained"
                           color="primary"
@@ -260,13 +392,14 @@ const App = () => {
                         >
                           Next
                         </Button>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
+                  </StepContent>
+                </Step>
+              ))}
+            </Stepper>
+          </div>
         </div>
       )}
 
