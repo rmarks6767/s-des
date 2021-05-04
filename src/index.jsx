@@ -17,7 +17,7 @@ const AppWrapper = () => {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <App />
-      <div style={{ position: 'absolute', bottom: 0, right: 0 }}>
+      <div style={{ position: 'fixed', bottom: 0, right: 0 }}>
         <FormControlLabel
           control={(
             <Switch
