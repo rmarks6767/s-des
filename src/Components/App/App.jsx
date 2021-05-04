@@ -317,9 +317,9 @@ const App = () => {
           </Button>
           <Button
             onClick={() => {
-              setEncryptedText('òDWW¡Ò(¡ÙWË');
+              setEncryptedText('11110010 11101000 10111111 10111111 00001001 11010010 00101000 00001001 01010001 10111111 10100011');
               setDecryptionKey('1010101010');
-              decryptMessage('òDWW¡Ò(¡ÙWË', '1010101010');
+              decryptMessage('11110010 11101000 10111111 10111111 00001001 11010010 00101000 00001001 01010001 10111111 10100011', '1010101010');
             }}
           >
             Try an Example Decryption
