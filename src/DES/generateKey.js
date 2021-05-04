@@ -33,7 +33,7 @@ const generateKeys = (key) => {
     steps: [
       `Apply 10 bit permutation to ${key}, turning it into ${p10.join('')}.`,
       `Split the 10 bit value into left, ${leftHalf.join('')}, and right, ${rightHalf.join('')}.`,
-      `Perform a 1 bit shift on both of these, givng a new left of ${l1.join('')}, and a new right of ${r1.join('')}.`,
+      `Perform a 1 bit shift on both of these, giving a new left of ${l1.join('')}, and a new right of ${r1.join('')}.`,
       `Recombine these two halves and perform an eight bit permutation, resulting in key 1: ${key1.join('')}.`,
       `Finally, perform a 2 bit shift on the values that were previously shifted and permutate the result of this by eight, giving key 2: ${key2.join('')}.`,
     ],

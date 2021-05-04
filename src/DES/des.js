@@ -52,8 +52,8 @@ const cryption = (text, key, reverseResult = false) => {
   const steps = [
     `Split the text into two equal halves of bit length 4, ${l1.join('')} and ${r1.join('')} respectively.`,
     `Perform an expansion on the right half, turning ${r1.join('')} into ${rExpand.join('')}.`,
-    `Perform an xor operation using the key, ${key.join('')} and the expanded right half from the previous step, giving ${rXor.join('')}.`,
-    `Split the result of the Xor operation into two halves, left: ${l2.join('')} and right: ${r2.join('')}.`,
+    `Perform an XOR operation using the key, ${key.join('')} and the expanded right half from the previous step, giving ${rXor.join('')}.`,
+    `Split the result of the XOR operation into two halves, left: ${l2.join('')} and right: ${r2.join('')}.`,
     `Now comes the calculation of what row and column to use from the S-Boxes. The first and fourth bit will be the row and the second and 
     third bit will be the column. The left side of the above split will use box S0 and the right will use box S1. Bits one and four of 
     the left, ${sliceRow1} are the row ${row1} and bits two and three of left, ${slideCol1} are the column ${col1} in S0. Bits one and four of 
@@ -61,7 +61,7 @@ const cryption = (text, key, reverseResult = false) => {
     ${leftS0} for S0 and ${rightS1} for S1.`,
     `Now combine the result for S0 and S1 into one, ${sRes.join('')}.`,
     `Permutate that result by four, giving ${p4.join('')}.`,
-    `Perform an Xor operation on the original left half, ${l1.join('')} from the first split with the four permutation result, ${p4.join('')}, giving ${lXor.join('')}.`,
+    `Perform an XOR operation on the original left half, ${l1.join('')} from the first split with the four permutation result, ${p4.join('')}, giving ${lXor.join('')}.`,
   ];
 
   if (reverseResult) {
@@ -71,7 +71,7 @@ const cryption = (text, key, reverseResult = false) => {
       result,
       steps: [
         ...steps,
-        `Finally, recombine the original right half ${r1.join('')} and the result from the left side Xor, reversing the left and right, giving a result of ${result.join('')}.`,
+        `Finally, recombine the original right half ${r1.join('')} and the result from the left side XOR, reversing the left and right, giving a result of ${result.join('')}.`,
       ],
     };
   }
@@ -113,10 +113,10 @@ const encrypt = (plaintext, key) => {
     result: inversePermutation.join(''),
     steps: {
       'Key Generation': keyGenSteps,
-      'Intial Permutation': [`Perform the initial permutation on the plaintext, transforming ${plaintext} into ${initialPermutation.join('')}`],
+      'Initial Permutation': [`Perform the initial permutation on the plaintext, transforming ${plaintext} into ${initialPermutation.join('')}.`],
       'Round 1': round1Steps,
       'Round 2': round2Steps,
-      Finish: [`Finally, perform the inverse permutation, turning the round 2 result, ${round2Result.join('')}, into ${inversePermutation.join('')} or ${String.fromCharCode(binaryToDecimal(inversePermutation.join('')))}`],
+      Finish: [`Finally, perform the inverse permutation, turning the round 2 result, ${round2Result.join('')}, into ${inversePermutation.join('')} or ${String.fromCharCode(binaryToDecimal(inversePermutation.join('')))}.`],
     },
   };
 };
@@ -147,7 +147,7 @@ const decrypt = (cipherText, key) => {
     result: inversePermutation.join(''),
     steps: {
       'Key Generation': keyGenSteps,
-      'Intial Permutation': [`Perform the initial permutation on the cipherText, transforming ${cipherText} into ${initialPermutation.join('')}`],
+      'Initial Permutation': [`Perform the initial permutation on the cipherText, transforming ${cipherText} into ${initialPermutation.join('')}.`],
       'Round 1': round1Steps,
       'Round 2': round2Steps,
       Finish: [`Finally, perform the inverse permutation, turning the round 2 result, ${round2Result.join('')}, 

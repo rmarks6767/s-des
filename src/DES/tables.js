@@ -19,13 +19,13 @@ const s1 = [
   [2, 1, 0, 3],
 ];
 
-// 4-bit permuation
+// 4-bit permutation
 const perm4 = [1, 3, 2, 0];
 
-// 8-bit permuation
+// 8-bit permutation
 const perm8 = [5, 2, 6, 3, 7, 4, 9, 8];
 
-// 10-bit permuation
+// 10-bit permutation
 const perm10 = [2, 4, 1, 6, 3, 9, 0, 8, 7, 5];
 
 module.exports = {

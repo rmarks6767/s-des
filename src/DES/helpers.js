@@ -1,9 +1,12 @@
+/* eslint-disable radix */
+/* eslint-disable no-bitwise */
+/* eslint-disable no-plusplus */
 const { ep } = require('./tables');
 
 /**
  * Takes in a binary item and performs the given permutation
  * @param {*} input item to be permutated
- * @param {*} perm  the permuation to be performed
+ * @param {*} perm  the permutation to be performed
  * @returns the permutated item
  */
 const permutate = (input, perm) => {

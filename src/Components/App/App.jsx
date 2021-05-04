@@ -82,7 +82,7 @@ const App = () => {
 
       if (i === 0) {
         setSteps({
-          Start: [`The following shows how the decryption for the first letter, ${String.fromCharCode(binaryToDecimal(bit))}, or ${bit} expressed as binary, works.`],
+          Start: [`The following shows how the decryption for ${bit} works.`],
           ...s,
         });
       }
@@ -100,7 +100,7 @@ const App = () => {
   return (
     <div className="app">
       <Typography className="title title-title general-padding" variant="h1" component="h2">
-        Implementation of a Mini-DES
+        Implementation of a Simplified-DES
       </Typography>
       <Typography className="title general-padding" variant="h5" component="h5">
         Project by Vivian Nowka-Keane and River Marks
